@@ -1,0 +1,25 @@
+{
+  "name": "audacity",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch": "budo src/main.tsx --live --dir assets -- -d -p tsify",
+    "test": "ts-node test"
+  },
+  "keywords": [
+    "Web Audio",
+    "Audio",
+    "Channels"
+  ],
+  "author": "Steve Kane",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^15.3.1",
+    "react-dom": "^15.3.1"
+  },
+  "devDependencies": {
+    "tsify": "^1.0.6",
+    "typescript": "^2.0.2"
+  }
+}
