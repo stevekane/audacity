@@ -1,23 +1,14 @@
-import { IGraph, Edges, vertices } from './Graph'
+import { IGraph, EdgePairGraph } from './Graph'
 
-export class AudioSystem implements IGraph<GraphNode> {
-  edges: Edges<GraphNode>
+export class AudioSystem extends EdgePairGraph<GraphNode> {
+  edges: Map<GraphNode, Set<GraphNode>>
   vertices: GraphNode[]
 
-  constructor(pairs: { src: GraphNode, dest?: GraphNode }[]) {
-    const edges = new Map as Map<GraphNode, Set<GraphNode>>
-
-    for ( const { src, dest } of pairs ) {
-      const foundSrc = edges.get(src)
-
-      if      ( dest )               src.node.connect(dest.node)
-      if      ( foundSrc && dest )   foundSrc.add(dest) 
-      else if ( !foundSrc && dest )  edges.set(src, new Set([ dest ]))
-      else if ( !foundSrc && !dest ) edges.set(src, new Set)
-      else                           continue
+  constructor(pairs: Iterable<{ src: GraphNode, dest: GraphNode }>) {
+    super(pairs)
+    for ( const e of this.edges.entries() ) {
+      e[1].forEach(dest => e[0].node.connect(dest.node))  
     }
-    this.edges = edges
-    this.vertices = vertices(this)
   }
 }
 

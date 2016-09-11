@@ -4,7 +4,6 @@ import * as React from 'react'
 import * as DOM from 'react-dom'
 import { loadAudioFile } from './loading'
 import { Visualizer } from './render'
-import { vertices } from './Graph'
 import { AudioSystem, Gain, Analyser, Destination, play } from './AudioSystem'
 import { log } from './utils'
 
@@ -15,8 +14,7 @@ const a = new Analyser(ac, { x: 0, y: 100 }, { fftSize: 256 })
 const d = new Destination(ac, { x: 0, y: 0 })
 const audioSystem = new AudioSystem([
   { src: g, dest: a }, 
-  { src: a, dest: d },
-  { src: d }
+  { src: a, dest: d }
 ])
 
 loadAudioFile(ac, 'bg-music1.mp3')
@@ -26,6 +24,7 @@ loadAudioFile(ac, 'bg-music1.mp3')
 })
 ROOT_EL.style.height = '100%'
 document.body.appendChild(ROOT_EL)
+console.log([ ...audioSystem.edges.keys() ])
 
 function render () {
   a.node.getByteFrequencyData(a.frequencyData)
