@@ -1,13 +1,12 @@
 import * as React from 'react'
+import { AudioSystem } from './AudioSystem'
 
 export class Bar extends React.Component<{ magnitude: number }, null> {
   render() {
     const ratio = this.props.magnitude / 400
     const props = {
       style: {
-        backgroundColor: 'red',
-        height: '300px',
-        transformOrigin: '50% 0%',
+        backgroundColor: `rgb(${ Math.floor(ratio * 255) }, 0, 0)`,
         transform: `scaleY(${ ratio })`,
         flex: '1 1 100%'
       }
@@ -22,7 +21,8 @@ export class Visualizer extends React.Component<{ buffer: Uint8Array }, null> {
     const bars = [] as JSX.Element[]
     const props = {
       style: {
-        display: 'flex'
+        display: 'flex',
+        height: '100%'
       }
     }
 
@@ -30,5 +30,20 @@ export class Visualizer extends React.Component<{ buffer: Uint8Array }, null> {
       bars.push(<Bar key={ i } magnitude={ this.props.buffer[i] } />)
     }
     return <div { ...props }>{ bars }</div>
+  }
+}
+
+export class AudioSystemComponent extends React.Component<{ audioSystem: AudioSystem }, null> {
+  render() {
+    const props = {
+      viewBox: '0 0 800 800',
+      style: {
+        display: 'flex',
+        height: '100%',
+        backgroundColor: 'red'
+      } 
+    }
+
+    return <svg></svg> 
   }
 }

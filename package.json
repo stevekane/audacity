@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "watch": "budo src/main.tsx --live --dir assets -- -d -p tsify",
+    "watch": "budo src/main.tsx --css styles.css --live --dir assets -- -d -p tsify",
     "test": "ts-node test"
   },
   "keywords": [
