@@ -1,3 +1,8 @@
+export interface Sound { 
+  buffer: AudioBuffer, 
+  startTime?: number
+}
+
 export function gainWith (ac: AudioContext, opts: { volume?: number }): GainNode {
   const g = ac.createGain()
 
@@ -5,21 +10,23 @@ export function gainWith (ac: AudioContext, opts: { volume?: number }): GainNode
   return g
 }
 
-export function play (channel: AudioNode, playing: AudioBufferSourceNode[], buffers: AudioBuffer[]): AudioBufferSourceNode[] {
+export function play (channel: AudioNode, playing: AudioBufferSourceNode[], sounds: Sound[]): AudioBufferSourceNode[] {
   const sources = [] as AudioBufferSourceNode[]
 
-  for ( const buffer of buffers ) {
+  for ( const { buffer, startTime } of sounds ) {
     const source = channel.context.createBufferSource() 
 
     source.buffer = buffer
     source.connect(channel)
-    source.start(0)
+    source.start(startTime)
     sources.push(source)
   }
+  return playing.concat(sources)
+}
+
+export function start (channel: AudioNode, playing: AudioBufferSourceNode[], sounds: Sound[]): AudioBufferSourceNode[] {
   for ( const sound of playing ) {
-    console.log(sound)
     sound.stop(0) 
-    sound.disconnect(channel)
   }
-  return sources
+  return play(channel, [], sounds)
 }
