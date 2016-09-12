@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { AudioSystem } from './AudioSystem'
+import { AudioSystem, GraphNode, IGain, IAnalyser, IDestination } from './AudioSystem'
 
 export class Bar extends React.Component<{ magnitude: number }, null> {
   render() {
@@ -33,17 +33,51 @@ export class Visualizer extends React.Component<{ buffer: Uint8Array }, null> {
   }
 }
 
-export class AudioSystemComponent extends React.Component<{ audioSystem: AudioSystem }, null> {
+export class GainNode extends React.Component<{ gain: GraphNode }, null> {
+  render() {
+    const { x, y } = this.props.gain.position
+    const gProps = {
+      id: this.props.gain.id.toString(),
+      transform: `translate(${ x }, ${ y })`
+    }
+    const tProps = {
+      textAnchor: 'middle',
+      children: 'Gain'
+    }
+    const cProps = {
+      r: 30,
+      stroke: 'blue',
+      fill: 'none'
+    }
+
+    return (
+      <g { ...gProps } >
+        <text { ...tProps } />
+        <circle { ...cProps } />
+      </g>
+    )
+  }
+}
+
+export class AudioSystemGraph extends React.Component<AudioSystem, null> {
   render() {
     const props = {
-      viewBox: '0 0 800 800',
+      viewBox: '-320 -240 640 480',
       style: {
         display: 'flex',
         height: '100%',
-        backgroundColor: 'red'
+        border: '1px solid blue'
       } 
     }
+    const nodes = [] as JSX.Element[]
 
-    return <svg></svg> 
+    for (var node of this.props.edges.keys() ) {
+      if      ( node.kind === 'Gain' )        nodes.push(<GainNode gain={ node } key={ node.id } />)
+      else if ( node.kind === 'Analyser' )    nodes.push(<GainNode gain={ node } key={ node.id } />)
+      else if ( node.kind === 'Destination' ) nodes.push(<GainNode gain={ node } key={ node.id } />)
+      else if ( node.kind === 'Source' ) nodes.push(<GainNode gain={ node } key={ node.id } />)
+      else continue
+    }
+    return <svg { ...props }>{ nodes }</svg> 
   }
 }
