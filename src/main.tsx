@@ -52,7 +52,7 @@ const initialState: IState = {
   audioFiles: [] as FileHandle<AudioBuffer>[]
 }
 
-async function raf<T> (f: (t: T) => Promise<T>, t: T): Promise<T> {
+function raf<T> (f: (t: T) => Promise<T>, t: T): Promise<T> {
   return new Promise(res => requestAnimationFrame(_ => res(f(t)))) as Promise<T>
 }
 
