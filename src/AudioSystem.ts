@@ -1,6 +1,10 @@
-export interface Sound { 
-  buffer: AudioBuffer, 
-  startTime?: number
+export interface ISound { 
+  node: AudioBufferSourceNode
+  playing: boolean
+}
+
+export class Sound implements ISound {
+  constructor(public node: AudioBufferSourceNode, public playing: boolean = true) {}
 }
 
 export function gainWith (ac: AudioContext, opts: { volume?: number }): GainNode {
@@ -10,23 +14,13 @@ export function gainWith (ac: AudioContext, opts: { volume?: number }): GainNode
   return g
 }
 
-export function play (channel: AudioNode, playing: AudioBufferSourceNode[], sounds: Sound[]): AudioBufferSourceNode[] {
-  const sources = [] as AudioBufferSourceNode[]
+export function play (channel: AudioNode, buffer: AudioBuffer, startTime: number = 0): ISound {
+  const source = channel.context.createBufferSource() 
+  const sound = new Sound(source)
 
-  for ( const { buffer, startTime } of sounds ) {
-    const source = channel.context.createBufferSource() 
-
-    source.buffer = buffer
-    source.connect(channel)
-    source.start(startTime)
-    sources.push(source)
-  }
-  return playing.concat(sources)
-}
-
-export function start (channel: AudioNode, playing: AudioBufferSourceNode[], sounds: Sound[]): AudioBufferSourceNode[] {
-  for ( const sound of playing ) {
-    sound.stop(0) 
-  }
-  return play(channel, [], sounds)
+  source.buffer = buffer
+  source.connect(channel)
+  source.start(startTime || 0)
+  source.onended = _ => sound.playing = false
+  return sound
 }
