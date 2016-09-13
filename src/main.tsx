@@ -57,63 +57,22 @@ async function update (state: IState): Promise<IState> {
   state.clock.dT = state.clock.current - state.clock.previous
   state.clock.elapsed += state.clock.dT
   state.playing = state.playing.filter(s => s.playing)
-  DOM.render(<div>{ `fps, ${ 1000 / state.clock.dT }` } </div>, state.rootEl)
+  DOM.render(<div>{ `Sounds Playing: ${ state.playing.length }` } </div>, state.rootEl)
   return Promise.resolve(state)
 }
 
 async function main (state: IState): Promise<IState> {
+  const out = state.ac.destination
   const rafUpdate = raf.bind(null, update)
   const audioFiles = await Promise.all([ 
     loadAudioFile(state.ac, 'bg-music1.mp3'), 
     loadAudioFile(state.ac, 'sound1.mp3')
   ])
   
-  state.playing = [ play(state.ac.destination, audioFiles[0].buffer) ]
+  state.playing = audioFiles.map(a => play(out, a.buffer))
   state.audioFiles = audioFiles
   return forever(rafUpdate, state)
 }
 
 document.body.appendChild(rootEl)
 main(initialState)
-
-//Promise.all([
-//  loadAudioFile(initialState.ac, 'bg-music1.mp3'),
-//  loadAudioFile(initialState.ac, 'sound1.mp3')
-//])
-//.then(audioFiles=> {
-//  const playing = [ 
-//    play(initialState.ac.destination, audioFiles[0].buffer),
-//    play(initialState.ac.destination, audioFiles[1].buffer)
-//  ]
-//
-//  initialState.audioFiles = audioFiles
-//  initialState.playing = playing
-//  vsync(tick, initialState)
-//})
-
-//function tick (clock: Clock, state: IState): IState {
-//  state.playing = state.playing.filter(s => s.playing)
-//  DOM.render(<div>{ `fps, ${ 1000 / clock.dT }` } </div>, state.rootEl)
-//  return state
-//}
-//
-//function vsync<T> (fn: (clock: Clock, t: T) => T, initial: T) {
-//  const clock = {
-//    start: Date.now(),
-//    current: 0,
-//    previous: 0,
-//    elapsed: 0,
-//    dT: 0
-//  }
-//  var t = initial
-//
-//  function inner () { 
-//    clock.previous = clock.current
-//    clock.current = Date.now()
-//    clock.dT = clock.current - clock.previous
-//    clock.elapsed += clock.dT
-//    t = fn(clock, t)
-//    requestAnimationFrame(inner)
-//  }
-//  inner()
-//}
